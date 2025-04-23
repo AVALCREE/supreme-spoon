@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Achievements</title>
+  <link rel="icon" href="logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0e0f11;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding: 3rem;
+    }
+    h1 { color: #00e0ff; }
+    ul {
+      margin-top: 2rem;
+      list-style: none;
+      padding: 0;
+      display: inline-block;
+      text-align: left;
+    }
+    li {
+      padding: 0.5rem 1rem;
+      font-size: 1.2rem;
+      border-left: 4px solid transparent;
+    }
+    .unlocked {
+      color: #00ff88;
+      border-color: #00ff88;
+    }
+    .locked {
+      color: #666;
+      border-color: #333;
+    }
+    .cat-gif {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.4);
+    }
+    a {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      background: #00e0ff;
+      color: #0e0f11;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px #00e0ff66;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Achievements</h1>
+  <ul id="achievementList"></ul>
+  <a href="index.html">Return to Home</a>
+  <img src="cat.gif" alt="Cat" class="cat-gif" />
+
+  <script>
+    const achievements = {
+      homepage: "Visited the Homepage",
+      subscribe: "Subscribed to the Channel",
+      404: "Got Lost Like a Pro",
+      clickmaster: "Clicked 15 Bytes",
+      trivia: "Trivia Master",
+      catfeeder: "Fed the Cat",
+      konami: "Classic Code Warrior",
+      npcchat: "Byte Talked to Me"
+    };
+
+    const unlocked = JSON.parse(localStorage.getItem("nbg_achievements") || "[]");
+    const list = document.getElementById("achievementList");
+
+    Object.entries(achievements).forEach(([id, label]) => {
+      const li = document.createElement("li");
+      li.textContent = label;
+      li.className = unlocked.includes(id) ? "unlocked" : "locked";
+      list.appendChild(li);
+    });
+  </script>
+</body>
+</html>

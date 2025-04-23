@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake MEMZ Simulation (Harmless)</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: monospace;
+            color: white;
+            cursor: default;
+            perspective: 800px;
+        }
+
+        #tunnel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 70%, black 100%);
+            z-index: 990;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .tunnel-active #tunnel-overlay {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .fake-window {
+            position: absolute;
+            background-color: #333;
+            color: #eee;
+            border: 1px solid #555;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            cursor: move;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+            overflow: hidden; /* To contain the image */
+        }
+
+        .fake-window img {
+            display: block;
+            width: 100%;
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .error-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 255, 0.8); /* Blue background */
+            color: white; /* White text for contrast */
+            padding: 20px;
+            border: 2px solid blue;
+            z-index: 1000;
+        }
+
+        .fake-command {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: lime;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .text-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: cyan;
+            padding: 15px;
+            border: 1px solid cyan;
+            font-size: 1.5em;
+            z-index: 999;
+        }
+
+        .progress-bar-container {
+            position: fixed;
+            bottom: 80px; /* Adjusted position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 20px;
+            background-color: #222;
+            border: 1px solid #444;
+            overflow: hidden;
+            z-index: 998;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: limegreen;
+        }
+
+        .screen-glitch {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+        }
+
+        .screen-glitch-active {
+            opacity: 1;
+        }
+
+        .windows7-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f0f0f0;
+            color: black;
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            width: 300px;
+            padding: 10px;
+            font-size: 0.9em;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            z-index: 1001;
+        }
+
+        .windows7-popup.popped {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .popup-title {
+            background-color: #e0e0e0;
+            padding: 5px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .popup-content {
+            padding: 5px;
+        }
+
+        #fake-bsod {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0000AA; /* Windows Blue Screen Color */
+            color: #FFFFFF;
+            font-family: 'Lucida Console', Monaco, monospace;
+            white-space: pre-wrap;
+            padding: 20px;
+            font-size: 1.1em;
+            line-height: 1.3em;
+            display: none; /* Hidden by default */
+            z-index: 10000;
+        }
+
+        #controls {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1002;
+        }
+
+        #controls label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="tunnel-overlay"></div>
+    <div id="screen-glitch" class="screen-glitch"></div>
+    <div id="fake-bsod">
+        A problem has been detected and windows has been shut down to prevent damage
+        to your computer.
+
+        The problem seems to be caused by the following file: MEMZ.sys
+
+        PAGE_FAULT_IN_NONPAGED_AREA
+
+        If this is the first time you've seen this stop error screen,
+        restart your computer. If this screen appears again, follow
+        these steps:
+
+        Check to make sure any new hardware or software is properly installed.
+        If this is a new installation, ask your hardware or software manufacturer
+        for any windows updates you might need.
+
+        If problems continue, disable or remove any newly installed hardware
+        or software. Disable BIOS memory options such as caching or shadowing.
+        If you need to use safe Mode to remove or disable components, restart
+        your computer, press F8 to select Advanced Startup Options, and then
+        select safe Mode.
+
+        Technical information:
+        *** STOP: 0x00000050 (0xFFFFF80000000000, 0x0000000000000000, 0xFFFFF80000000000, 0x0000000000000000)
+
+        *** MEMZ.sys - Address FFFFF80000000000 base at FFFFF80000000000 DateStamp 00000000
+
+        Beginning dump of physical memory
+        Dumping physical memory to disk: 100
+        Physical memory dump complete.
+        Contact your system administrator or technical support group for further assistance.
+    </div>
+
+    <div id="controls">
+        <button id="startButton">Start</button>
+        <label for="intensitySlider">Intensity:</label>
+        <input type="range" id="intensitySlider" min="1" max="10" value="5">
+        <label><input type="checkbox" id="infiniteMode"> Infinite Mode</label>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const tunnelOverlay = document.getElementById('tunnel-overlay');
+            const screenGlitch = document.getElementById('screen-glitch');
+            const fakeBsod = document.getElementById('fake-bsod');
+            const backgroundImageURL = 'IMG_0098.jpeg'; // Using the specified image
+            const allElements = document.querySelectorAll('body > *:not(#fake-bsod):not(#controls)');
+            const startButton = document.getElementById('startButton');
+            const intensitySlider = document.getElementById('intensitySlider');
+            const infiniteModeCheckbox = document.getElementById('infiniteMode');
+
+            let simulationActive = false;
+            let intensity = 5;
+            let infiniteModeEnabled = false;
+            let intervalIds = [];
+            let timeoutIds = [];
+
+            // Set the background image
+            body.style.backgroundImage = `url('${backgroundImageURL}')`;
+
+            const clearAllIntervalsAndTimeouts = () => {
+                intervalIds.forEach(clearInterval);
+                timeoutIds.forEach(clearTimeout);
+                intervalIds = [];
+                timeoutIds = [];
+            };
+
+            const startSimulation = () => {
+                if (simulationActive) return;
+                simulationActive = true;
+                body.style.backgroundImage = `url('${backgroundImageURL}')`; // Restore background on start
+                fakeBsod.style.display = 'none'; // Hide BSOD on start
+                const progressBarContainer = document.querySelector('.progress-bar-container');
+                if (progressBarContainer) progressBarContainer.style.display = 'block';
+                allElements.forEach(el => el.style.display = 'block');
+
+                let progress = 0;
+                let bsodTriggered = false;
+                const progressBarElement = document.querySelector('.progress-bar');
+                if (progressBarElement) progressBarElement.style.width = '0%';
+                progress = 0;
+                bsodTriggered = false;
+
+                const getDelay = (baseDelay) => baseDelay / intensity;
+
+                // 1. Tunnel Effect
+                const activateTunnelInterval = setInterval(() => {
+                    body.classList.add('tunnel-active');
+                    timeoutIds.push(setTimeout(() => {
+                        body.classList.remove('tunnel-active');
+                    }, getDelay(5000)));
+                }, getDelay(15000));
+                intervalIds.push(activateTunnelInterval);
+
+                // 2. Screen Glitches
+                const triggerGlitchInterval = setInterval(() => {
+                    screenGlitch.classList.add('screen-glitch-active');
+                    timeoutIds.push(setTimeout(() => {
+                        screenGlitch.classList.remove('screen-glitch-active');
+                    }, getDelay(100)));
+                }, getDelay(4000));
+                intervalIds.push(triggerGlitchInterval);
+
+                // 3. Simulate Random Window Movement
+                const createFakeWindow = (title) => {
+                    const windowElem = document.createElement('div');
+                    windowElem.classList.add('fake-window');
+                    const windowImage = document.createElement('img');
+                    windowImage.src = 'IMG_0099.png';
+                    windowImage.alt = title;
+                    windowElem.appendChild(windowImage);
+                    body.appendChild(windowElem);
+                    const randomX = Math.random() * (window.innerWidth - 200);
+                    const randomY = Math.random() * (window.innerHeight - 100);
+                    windowElem.style.left = `${randomX}px`;
+                    windowElem.style.top = `${randomY}px`;
+                    timeoutIds.push(setTimeout(() => {
+                        windowElem.classList.add('window-popped');
+                    }, Math.random() * getDelay(1000)));
+                    let offsetX, offsetY, isDragging = false;
+                    windowElem.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        offsetX = e.clientX - windowElem.getBoundingClientRect().left;
+                        offsetY = e.clientY - windowElem.getBoundingClientRect().top;
+                        windowElem.style.zIndex = 100;
+                    });
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        windowElem.style.left = `${e.clientX - offsetX}px`;
+                        windowElem.style.top = `${e.clientY - offsetY}px`;
+                    });
+                    document.addEventListener('mouseup', () => {
+                        isDragging = false;
+                        windowElem.style.zIndex = 1;
+                    });
+                    return windowElem;
+                };
+                const windows = [
+                    createFakeWindow('Fake Explorer'),
+                    createFakeWindow('System Monitor'),
+                    createFakeWindow('Text Editor'),
+                    createFakeWindow('Settings'),
+                    createFakeWindow('Command Prompt'),
+                    createFakeWindow('Image Viewer')
+                ];
+                const moveWindowsRandomlyInterval = setInterval(() => {
+                    windows.forEach(win => {
+                        const randomX = Math.random() * (window.innerWidth - win.offsetWidth);
+                        const randomY = Math.random() * (window.innerHeight - win.offsetHeight);
+                        win.style.left = `${randomX}px`;
+                        win.style.top = `${randomY}px`;
+                    });
+                }, getDelay(2000));
+                intervalIds.push(moveWindowsRandomlyInterval);
+
+                // 4. Simulate Inverting Colors
+                const toggleInvertColorsInterval = setInterval(() => {
+                    let invert = body.style.filter === 'invert(100%)';
+                    body.style.filter = invert ? 'invert(0%)' : 'invert(100%)';
+                }, getDelay(6000));
+                intervalIds.push(toggleInvertColorsInterval);
+
+                // 5. Display Fake Error Messages
+                const errorMessages = [
+                    'ERROR: Critical system component malfunctioning.',
+                    'WARNING: Unexpected behavior detected.',
+                    'FATAL: Simulation unstable.',
+                    'MEMZ: The end is near (just kidding... mostly).',
+                    'Blue Screen of... Browser?',
+                    'Attention: Fun levels are critical.'
+                ];
+                const displayRandomErrorInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * errorMessages.length);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.classList.add('error-message');
+                    errorDiv.textContent = errorMessages[randomIndex];
+                    body.appendChild(errorDiv);
+                    const randomX = Math.random() * (window.innerWidth - 200);
+                    const randomY = Math.random() * (window.innerHeight - 100);
+                    errorDiv.style.left = `${randomX}px`;
+                    errorDiv.style.top = `${randomY}px`;
+                    timeoutIds.push(setTimeout(() => {
+                        errorDiv.remove();
+                    }, getDelay(3000)));
+                }, getDelay(7000));
+                intervalIds.push(displayRandomErrorInterval);
+
+                // 6. Simulate Fake Command Output
+                const commands = [
+                    'Analyzing system...',
+                    'Patching vulnerabilities...',
+                    'Initiating data transfer...',
+                    'Running diagnostics...',
+                    '> rm -rf /',
+                    'Error: Operation not permitted.',
+                    'Executing: start chrome.exe'
+                ];
+                const displayRandomCommandInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * commands.length);
+                    const commandDiv = document.createElement('div');
+                    commandDiv.classList.add('fake-command');
+                    commandDiv.textContent = commands[randomIndex];
+                    const randomX = Math.random() * (window.innerWidth - 200);
+                    const randomY = Math.random() * (window.innerHeight - 50);
+                    commandDiv.style.left = `${randomX}px`;
+                    commandDiv.style.top = `${randomY}px`;
+                    timeoutIds.push(setTimeout(() => {
+                        commandDiv.remove();
+                    }, getDelay(4000)));
+                }, getDelay(5000));
+                intervalIds.push(displayRandomCommandInterval);
+
+                // 7. Subtle Mouse Cursor Effect
+                const cursorStyles = ['default', 'crosshair', 'wait', 'help', 'grabbing', 'progress', 'cell'];
+                const changeCursorInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * cursorStyles.length);
+                    body.style.cursor = cursorStyles[randomIndex];
+                    timeoutIds.push(setTimeout(() => {
+                        body.style.cursor = 'default';
+                    }, getDelay(600)));
+                }, getDelay(9000));
+                intervalIds.push(changeCursorInterval);
+
+                // 8. Temporary Text Overlays
+                const textOverlays = [
+                    'WARNING',
+                    'DO NOT PANIC',
+                    'JUST A PRANK',
+                    'YOU ARE INFECTED (with fun)',
+                    'REBOOTING... (browser)'
+                ];
+                const displayRandomOverlayInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * textOverlays.length);
+                    const overlayDiv = document.createElement('div');
+                    overlayDiv.classList.add('text-overlay');
+                    overlayDiv.textContent = textOverlays[randomIndex];
+                    body.appendChild(overlayDiv);
+                    timeoutIds.push(setTimeout(() => {
+                        overlayDiv.remove();
+                    }, getDelay(2500)));
+                }, getDelay(11000));
+                intervalIds.push(displayRandomOverlayInterval);
+
+                // 9. Fake Progress Bar and BSOD Trigger
+                const progressBarContainerElement = document.querySelector('.progress-bar-container');
+                const updateProgressBar = () => {
+                    if (!simulationActive) return;
+                    if (bsodTriggered && !infiniteModeEnabled) return;
+
+                    progress += Math.random() * 3; // Reduced increment for smoother progression
+                    if (progressBarElement) progressBarElement.style.width = `${Math.min(progress, 100)}%`;
+
+                    if (progress >= 98 && !bsodTriggered && !infiniteModeEnabled) {
+                        bsodTriggered = true;
+                        timeoutIds.push(setTimeout(() => {
+                            body.style.backgroundImage = 'none'; // Destroy background
+                            if (progressBarContainerElement) progressBarContainerElement.style.display = 'none';
+                            allElements.forEach(el => el.style.display = 'none');
+                            fakeBsod.style.display = 'block';
+                        }, 1500));
+                    } else if (infiniteModeEnabled && progress >= 100) {
+                        progress = 0;
+                        if (progressBarElement) progressBarElement.style.width = '0%';
+                        bsodTriggered = false; // Allow it to potentially trigger again if mode is turned off
+                        timeoutIds.push(setTimeout(updateProgressBar, 500)); // Continue progress
+                    } else if (!bsodTriggered) {
+                        timeoutIds.push(setTimeout(updateProgressBar, 400));
+                    }
+                };
+                timeoutIds.push(setTimeout(updateProgressBar, 1500));
+
+                // 10. Recreate Windows 7 Popup
+                const popupMessages = [
+                    { title: 'Security Alert', content: 'Your system might be at risk (not really).' },
+                    { title: 'Information', content: 'Did you know this is just a simulation?' },
+                    { title: 'Warning', content: 'Brace yourself for more harmless effects!' },
+                    { title: 'MEMZ', content: 'Another payload activated.' }
+                ];
+                const displayRandomPopupInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * popupMessages.length);
+                    const message = popupMessages[randomIndex];
+                    const popup = document.createElement('div');
+                    popup.classList.add('windows7-popup');
+                    const titleBar = document.createElement('div');
+                    titleBar.classList.add('popup-title');
+                    titleBar.textContent = message.title;
+                    popup.appendChild(titleBar);
+                    const contentDiv = document.createElement('div');
+                    contentDiv.classList.add('popup-content');
+                    contentDiv.textContent = message.content;
+                    popup.appendChild(contentDiv);
+                    body.appendChild(popup);
+                    timeoutIds.push(setTimeout(() => {
+                        popup.classList.add('popped');
+                    }, 100));
+                    timeoutIds.push(setTimeout(() => {
+                        popup.classList.remove('popped');
+                        timeoutIds.push(setTimeout(() => {
+                            popup.remove();
+                        }, 300));
+                    }, getDelay(5000)));
+                }, getDelay(10000));
+                intervalIds.push(displayRandomPopupInterval);
+            };
+
+            const stopSimulation = () => {
+                simulationActive = false;
+                clearAllIntervalsAndTimeouts();
+                body.style.backgroundImage = `url('${backgroundImageURL}')`;
+                body.style.filter = 'invert(0%)'; // Reset invert
+                body.style.cursor = 'default';
+                const progressBarElement = document.querySelector('.progress-bar');
+                if (progressBarElement) progressBarElement.style.width = '0%';
+                const progressBarContainer = document.querySelector('.progress-bar-container');
+                if (progressBarContainer) progressBarContainer.style.display = 'none';
+                allElements.forEach(el => el.style.display = 'none');
+                fakeBsod.style.display = 'none';
+            };
+
+            startButton.addEventListener('click', () => {
+                stopSimulation(); // Stop any existing simulation
+                startSimulation(); // Start fresh
+            });
+
+            intensitySlider.addEventListener('input', () => {
+                intensity = parseInt(intensitySlider.value);
+                if (simulationActive) {
+                    stopSimulation();
+                    startSimulation();
+                }
+            });
+
+            infiniteModeCheckbox.addEventListener('change', () => {
+                infiniteModeEnabled = infiniteModeCheckbox.checked;
+                const progressBarContainer = document.querySelector('.progress-bar-container');
+                const progressBarElement = document.querySelector('.progress-bar');
+                if (infiniteModeEnabled) {
+                    if (progressBarContainer) progressBarContainer.style.display = 'block';
+                    if (progressBarElement) progressBarElement.style.width = '0%';
+                    let progress = 0;
+                    let bsodTriggered = false;
+                    const updateProgressBarInfinite = () => {
+                        if (!simulationActive || !infiniteModeEnabled) return;
+                        progress += Math.random() * 3;
+                        if (progressBarElement) progressBarElement.style.width = `${Math.min(progress, 100)}%`;
+                        if (progress >= 100) {
+                            progress = 0;
+                            if (progressBarElement) progressBarElement.style.width = '0%';
+                        }
+                        timeoutIds.push(setTimeout(updateProgressBarInfinite, 400));
+                    };
+                    if (simulationActive) timeoutIds.push(setTimeout(updateProgressBarInfinite, 1500));
+                } else {
+                    if (simulationActive) {
+                        stopSimulation();
+                        startSimulation();
+                    } else if (progressBarContainer) {
+                        progressBarContainer.style.display = 'none';
+                        if (progressBarElement) progressBarElement.style.width = '0%';
+                    }
+                }
+            });
+
+            // Start hidden
+            const progressBarContainer = document.querySelector('.progress-bar-container');
+            if (progressBarContainer) progressBarContainer.style.display = 'none';
+            allElements.forEach(el => el.style.display = 'none');
+            fakeBsod.style.display = 'none';
+
+            // --- Disclaimer ---
+            console.warn("This is a harmless simulation of MEMZ-like effects within a web browser.");
+            const disclaimer = document.createElement('div');
+            disclaimer.style.position = 'fixed';
+            disclaimer.style.bottom = '10px';
+            disclaimer.style.left = '10px';
+            disclaimer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            disclaimer.style.color = 'yellow';
+            disclaimer.style.padding = '10px';
+            disclaimer.style.borderRadius = '5px';
+            disclaimer.textContent = "WARNING: This is a FAKE MEMZ simulation. It will not harm your computer.";
+            body.appendChild(disclaimer);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NextByteGaming</title>
+  <link rel="icon" href="logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00e0ff;
+      --bg-color: #0e0f11;
+      --accent-color: #121418;
+      --text-color: #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+    #loader {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--bg-color);
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #loader.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 60px; height: 60px;
+      border: 6px solid rgba(0, 224, 255, 0.2);
+      border-top-color: #00e0ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    header {
+      text-align: center;
+      padding: 2rem;
+      background: var(--accent-color);
+    }
+    .logo { width: 80px; margin-bottom: 1rem; }
+    h1 {
+      font-size: 3rem;
+      color: var(--primary-color);
+      position: relative;
+    }
+    h1::after {
+      content: '_';
+      position: absolute;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+    .video-wrapper {
+      width: 90%;
+      max-width: 900px;
+      aspect-ratio: 16 / 9;
+      background: #121418;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 2rem auto;
+      box-shadow: 0 0 20px rgba(0, 224, 255, 0.3);
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .subscribe-button {
+      background: var(--primary-color);
+      color: var(--bg-color);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 1rem;
+      display: inline-block;
+    }
+    .achievement {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #1f1f1f;
+      color: var(--primary-color);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00e0ff66;
+      z-index: 9999;
+      animation: slideIn 1s ease-out, fadeOut 1s ease-in 4s forwards;
+    }
+    @keyframes slideIn {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-100%); }
+    }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.3); }
+    }
+    .cat-gif {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.4);
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: var(--accent-color);
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <img src="logo.png" alt="Logo" class="logo">
+    <div class="spinner"></div>
+    <div style="color: #aaa;">Loading NextByteGaming...</div>
+  </div>
+  <header>
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>NextByteGaming</h1>
+  </header>
+  <main style="text-align: center; padding: 2rem;">
+    <!-- YouTube Video Embed -->
+    <div class="video-wrapper" id="videoContainer">
+      <iframe id="latestVideo" src="" allowfullscreen></iframe>
+    </div>
+
+    <!-- Main Buttons -->
+    <a class="subscribe-button" href="https://www.youtube.com/@NextByteGaming" target="_blank" onclick="unlock('subscribe')">Subscribe</a>
+    <a class="subscribe-button" href="achievements.html">View Achievements</a>
+    <a class="subscribe-button" href="Hex.html">fake memz virus</a>
+
+    <!-- Byte Clicker Game -->
+    <section style="margin-top: 3rem;">
+      <h2 style="color: var(--primary-color);">🎯 Byte Clicker</h2>
+      <p>Score: <span id="score">0</span> | Best: <span id="highscore">0</span></p>
+      <div id="byte" style="
+        width: 40px;
+        height: 40px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px var(--primary-color);
+        cursor: pointer;
+        z-index: 1000;
+        animation: pulse 1s infinite alternate;
+      "></div>
+    </section>
+
+    <!-- Trivia Generator -->
+    <section style="margin-top: 4rem;">
+      <h2 style="color: var(--primary-color);">🎲 Random Gaming Trivia</h2>
+      <button class="subscribe-button" onclick="showTrivia()">Get Trivia</button>
+      <p id="trivia" style="margin-top: 1rem; color: #ccc;"></p>
+    </section>
+
+    <!-- Feed the Cat Button -->
+    <section style="margin-top: 4rem;">
+      <h2 style="color: var(--primary-color);">🐱 Feed the Byte Cat</h2>
+      <button class="subscribe-button" onclick="feedCat()">Feed</button>
+      <p id="cat-status" style="margin-top: 1rem; color: #ccc;"></p>
+    </section>
+
+    <!-- NPC Chat Byte -->
+    <div id="npc" style="
+      position: fixed;
+      bottom: 140px;
+      left: 20px;
+      max-width: 300px;
+      background: #1e1e1e;
+      color: #00e0ff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00e0ff44;
+      font-size: 0.9rem;
+      display: none;
+      z-index: 999;
+    "></div>
+
+    <img src="cat.gif" alt="Cat" class="cat-gif" />
+  </main>
+
+  <footer>
+    &copy; 2025 NextByteGaming — Powered by snacks and semicolons.
+  </footer>
+<script>
+  // --- Achievement System ---
+  const ACH_KEY = 'nbg_achievements';
+  const achievementData = {
+    homepage: 'Visited the Homepage',
+    subscribe: 'Subscribed to the Channel',
+    404: 'Got Lost Like a Pro',
+    clickmaster: 'Clicked 15 Bytes',
+    trivia: 'Trivia Master',
+    catfeeder: 'Fed the Cat',
+    konami: 'Classic Code Warrior',
+    npcchat: 'Byte Talked to Me'
+  };
+
+  function getAchievements() {
+    const data = localStorage.getItem(ACH_KEY);
+    return data ? JSON.parse(data) : [];
+  }
+
+  function saveAchievements(list) {
+    localStorage.setItem(ACH_KEY, JSON.stringify(list));
+  }
+
+  function unlock(id) {
+    const unlocked = getAchievements();
+    if (!unlocked.includes(id)) {
+      unlocked.push(id);
+      saveAchievements(unlocked);
+      showAchievement(id);
+    }
+  }
+
+  function showAchievement(id) {
+    const msg = achievementData[id];
+    const el = document.createElement('div');
+    el.className = 'achievement';
+    el.textContent = `🏆 Achievement Unlocked: ${msg}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+  }
+
+  // --- Loader + YouTube ---
+  window.addEventListener('load', () => {
+    document.getElementById('loader').classList.add('hidden');
+    setTimeout(() => document.getElementById('loader')?.remove(), 1000);
+    unlock('homepage');
+
+    const proxy = "https://api.rss2json.com/v1/api.json?rss_url=";
+    const feedURL = `https://www.youtube.com/feeds/videos.xml?channel_id=UCYFtD2qcs58nMBifGLN37hA`;
+    fetch(proxy + encodeURIComponent(feedURL))
+      .then(res => res.json())
+      .then(data => {
+        const videoId = data.items[0].link.split("=")[1];
+        document.getElementById("latestVideo").src = `https://www.youtube.com/embed/${videoId}`;
+      })
+      .catch(err => {
+        console.error("Could not fetch latest video:", err);
+        document.getElementById("videoContainer").innerHTML = `
+          <div style="padding: 2rem; color: #888; text-align: center;">
+            <p>404 Not Found<br/>
+            The link was a dream,<br/>
+            A shadow of what once was—<br/>
+            Now, nothing remains.</p>
+          </div>`;
+      });
+  });
+
+  // --- Byte Clicker Game ---
+  let score = 0;
+  const byte = document.getElementById("byte");
+  const scoreDisplay = document.getElementById("score");
+  const highscoreDisplay = document.getElementById("highscore");
+  const savedHighScore = parseInt(localStorage.getItem("nbg_highscore") || "0");
+  highscoreDisplay.textContent = savedHighScore;
+
+  function moveByte() {
+    const buffer = 60;
+    const x = Math.random() * (window.innerWidth - buffer);
+    const y = Math.random() * (window.innerHeight - buffer);
+    byte.style.left = `${x}px`;
+    byte.style.top = `${y}px`;
+  }
+
+  byte.addEventListener("click", () => {
+    score++;
+    scoreDisplay.textContent = score;
+    moveByte();
+    if (score > savedHighScore) {
+      localStorage.setItem("nbg_highscore", score);
+      highscoreDisplay.textContent = score;
+    }
+    if (score === 15) unlock("clickmaster");
+  });
+
+  // --- Trivia ---
+  const triviaFacts = [
+    "The first video game was created in 1958 and was a tennis game.",
+    "Mario was originally named Jumpman in Donkey Kong.",
+    "Minecraft was created in just 6 days.",
+    "The PlayStation was originally a Nintendo project.",
+    "Pac-Man was inspired by a pizza missing one slice.",
+    "The Konami Code has appeared in over 100 games.",
+    "Sonic the Hedgehog's shoes were inspired by Michael Jackson."
+  ];
+
+  function showTrivia() {
+    const fact = triviaFacts[Math.floor(Math.random() * triviaFacts.length)];
+    document.getElementById("trivia").textContent = fact;
+    unlock("trivia");
+  }
+
+  // --- Feed the Cat ---
+  function feedCat() {
+    document.getElementById("cat-status").textContent = "The cat has been fed. It is pleased.";
+    unlock("catfeeder");
+  }
+
+  // --- NPC Chat Byte ---
+  const npc = document.getElementById("npc");
+  const npcLines = [
+    "Hey, you clicked that byte pretty fast.",
+    "Nice layout. Did you code this all by yourself?",
+    "Achievement unlocked: talking to a floating byte.",
+    "You ever feel like you're being watched by HTML?",
+    "I'm not AI, I'm just a div with dreams."
+  ];
+
+  function showNPCMessage() {
+    const msg = npcLines[Math.floor(Math.random() * npcLines.length)];
+    npc.textContent = msg;
+    npc.style.display = "block";
+    unlock("npcchat");
+    setTimeout(() => { npc.style.display = "none"; }, 6000);
+  }
+
+  setInterval(showNPCMessage, 20000); // every 20 seconds
+
+  // --- Konami Code Detector ---
+  const konamiCode = [38,38,40,40,37,39,37,39,66,65];
+  let inputBuffer = [];
+
+  document.addEventListener("keydown", e => {
+    inputBuffer.push(e.keyCode);
+    if (inputBuffer.length > konamiCode.length) inputBuffer.shift();
+    if (JSON.stringify(inputBuffer) === JSON.stringify(konamiCode)) {
+      unlock("konami");
+      inputBuffer = [];
+    }
+  });
+
+</script>
+</body>
+</html>

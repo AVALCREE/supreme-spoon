@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>404 - Not Found</title>
+  <link rel="icon" href="logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0e0f11;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding: 4rem;
+    }
+    h1 { color: #00e0ff; font-size: 4rem; }
+    p { color: #aaa; margin: 1rem auto; max-width: 500px; }
+    a {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      background: #00e0ff;
+      color: #0e0f11;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 0 10px #00e0ff66;
+    }
+    .cat-gif {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 100px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.4);
+    }
+    .achievement {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #1f1f1f;
+      color: #00e0ff;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00e0ff66;
+      z-index: 999;
+      animation: slideIn 1s ease-out, fadeOut 1s ease-in 4s forwards;
+    }
+    @keyframes slideIn {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-100%); }
+    }
+  </style>
+</head>
+<body>
+  <h1>404</h1>
+  <p>The link was a dream,<br>A shadow of what once was—<br>Now, nothing remains.</p>
+  <a href="index.html">Back to Home</a>
+  <img src="cat.gif" alt="Cat" class="cat-gif" />
+  <script>
+    const id = '404';
+    const label = 'Got Lost Like a Pro';
+    const data = localStorage.getItem('nbg_achievements');
+    const unlocked = data ? JSON.parse(data) : [];
+    if (!unlocked.includes(id)) {
+      unlocked.push(id);
+      localStorage.setItem('nbg_achievements', JSON.stringify(unlocked));
+      const el = document.createElement('div');
+      el.className = 'achievement';
+      el.textContent = `🏆 Achievement Unlocked: ${label}`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 6000);
+    }
+  </script>
+</body>
+</html>
