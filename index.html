@@ -4,35 +4,41 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>lolwhat.xyz</title>
-  <!-- Tailwind CSS (dev CDN—swap for a proper build in prod!) -->
+  <!-- Tailwind CSS (dev CDN—swap for build in prod!) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Particles.js -->
+  <!-- Particles.js (your local file) -->
   <script src="particles.min.js"></script>
-
   <!-- VHS Font -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
 
   <style>
-    /* FULL-SCREEN PARTICLES BACKGROUND */
+    /* 1) Full-screen particles background */
     #particles-js {
       position: fixed;
       inset: 0;
       z-index: 0;
     }
 
-    /* CRT/TV FRAME + SCANLINES */
+    /* 2) CRT frame + scanlines */
     .crt-frame {
       position: relative;
-      background: rgba(0,0,0,0.75);
+      margin: 5vh auto;
+      padding: 4rem 2rem;
+      max-width: 600px;
+      background: rgba(0,0,0,0.8);
       border: 6px solid #111;
-      box-shadow: 0 0 2rem rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 2rem rgba(0,0,0,0.9);
       overflow: hidden;
+      z-index: 10;
+
+      /* cover whole frame in glitch stutter */
+      animation: glitchScreen 0.5s steps(2) infinite;
     }
     .crt-frame::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: 
+      background:
         repeating-linear-gradient(
           to bottom,
           rgba(255,255,255,0.02) 0px,
@@ -43,59 +49,35 @@
       pointer-events: none;
     }
 
-    /* VHS-Style Text + Glitch */
+    /* 3) VHS “WELCOME” text + fade-in + glitch layers */
     .vhs-text {
       font-family: 'VT323', monospace;
       font-size: 5rem;
       text-transform: uppercase;
-      position: relative;
       color: #fff;
       opacity: 0;
-      animation: fadeIn 1s ease-out forwards;
+      animation: fadeIn 1s ease-out 0.5s forwards;
+      position: relative;
     }
-    /* glitch layers */
     .vhs-text::before,
     .vhs-text::after {
       content: attr(data-text);
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      clip: rect(0, 9999px, 0, 0);
+      position: absolute; left:0; top:0;
+      width:100%; height:100%;
+      overflow:hidden;
     }
     .vhs-text::before {
-      animation: glitchTop 2s infinite ease-in-out;
       color: #f0f;
+      animation: glitchTop 2s infinite ease-in-out;
       z-index: -1;
     }
     .vhs-text::after {
-      animation: glitchBot 2s infinite ease-in-out;
       color: #0ff;
+      animation: glitchBot 2s infinite ease-in-out;
       z-index: -2;
     }
 
-    @keyframes glitchTop {
-      0%, 20%, 40%, 60%, 80%, 100% { clip: rect(0,9999px,0,0); }
-      10% { clip: rect(10px,9999px,50px,0); transform: translate(-2px,-2px); }
-      30% { clip: rect(30px,9999px,90px,0); transform: translate(2px,2px); }
-      50% { clip: rect(60px,9999px,120px,0); transform: translate(-2px,2px); }
-      70% { clip: rect(80px,9999px,140px,0); transform: translate(2px,-2px); }
-      90% { clip: rect(120px,9999px,200px,0); transform: translate(-2px,-2px); }
-    }
-    @keyframes glitchBot {
-      0%, 20%, 40%, 60%, 80%, 100% { clip: rect(0,9999px,0,0); }
-      10% { clip: rect(120px,9999px,160px,0); transform: translate(2px,2px); }
-      30% { clip: rect(160px,9999px,200px,0); transform: translate(-2px,-2px); }
-      50% { clip: rect(200px,9999px,240px,0); transform: translate(2px,-2px); }
-      70% { clip: rect(240px,9999px,280px,0); transform: translate(-2px,2px); }
-      90% { clip: rect(280px,9999px,320px,0); transform: translate(2px,2px); }
-    }
-
-    /* FADE-IN ANIMATION */
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
-    /* ENTER BUTTON */
+    /* 4) ENTER button with slower fade-in */
     .enter-btn {
       margin-top: 2rem;
       padding: 0.75rem 2rem;
@@ -106,28 +88,79 @@
       border: 3px solid #600;
       opacity: 0;
       transform: translateY(20px);
-      animation: fadeIn 1s ease-out 1.5s forwards;
+      animation: fadeIn 1s ease-out 2s forwards;
+      cursor: pointer;
     }
     .enter-btn:hover {
       background: #f33;
+    }
+
+    /* 5) Fade-in/out keyframes */
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: scale(0.8); }
+    }
+
+    /* 6) Fullscreen glitch stutter */
+    @keyframes glitchScreen {
+      0%   { clip: rect(0,9999px,5px,0); transform: translate(0,0); }
+      10%  { clip: rect(10px,9999px,20px,0); transform: translate(-5px,5px); }
+      20%  { clip: rect(30px,9999px,50px,0); transform: translate(5px,-5px); }
+      30%  { clip: rect(50px,9999px,70px,0); transform: translate(-5px,0); }
+      40%  { clip: rect(70px,9999px,90px,0); transform: translate(5px,5px); }
+      50%  { clip: rect(90px,9999px,110px,0); transform: translate(-5px,-5px); }
+      60%  { clip: rect(110px,9999px,130px,0); transform: translate(5px,0); }
+      70%  { clip: rect(130px,9999px,150px,0); transform: translate(-5px,5px); }
+      80%  { clip: rect(150px,9999px,170px,0); transform: translate(5px,-5px); }
+      90%  { clip: rect(170px,9999px,190px,0); transform: translate(0,5px); }
+      100% { clip: rect(0,9999px,5px,0); transform: translate(0,0); }
+    }
+
+    /* 7) Glitch text slices */
+    @keyframes glitchTop {
+      0%,20%,40%,60%,80%,100% { clip: rect(0,9999px,0,0); }
+      10% { clip: rect(10px,9999px,50px,0); transform: translate(-2px,-2px); }
+      30% { clip: rect(30px,9999px,90px,0); transform: translate(2px,2px); }
+      50% { clip: rect(60px,9999px,120px,0); transform: translate(-2px,2px); }
+      70% { clip: rect(80px,9999px,140px,0); transform: translate(2px,-2px); }
+      90% { clip: rect(120px,9999px,200px,0); transform: translate(-2px,-2px); }
+    }
+    @keyframes glitchBot {
+      0%,20%,40%,60%,80%,100% { clip: rect(0,9999px,0,0); }
+      10% { clip: rect(120px,9999px,160px,0); transform: translate(2px,2px); }
+      30% { clip: rect(160px,9999px,200px,0); transform: translate(-2px,-2px); }
+      50% { clip: rect(200px,9999px,240px,0); transform: translate(2px,-2px); }
+      70% { clip: rect(240px,9999px,280px,0); transform: translate(-2px,2px); }
+      90% { clip: rect(280px,9999px,320px,0); transform: translate(2px,2px); }
     }
   </style>
 </head>
 <body class="bg-black text-white overflow-hidden">
 
-  <!-- Particles.js Background -->
+  <!-- Particles Background -->
   <div id="particles-js"></div>
 
-  <!-- Centered CRT Frame -->
-  <div class="crt-frame mx-auto mt-16 p-8 max-w-lg text-center z-10 relative">
+  <!-- CRT Frame with Glitch -->
+  <div class="crt-frame text-center">
     <h1 class="vhs-text" data-text="WELCOME">WELCOME</h1>
     <button class="enter-btn">ENTER</button>
   </div>
 
-  <!-- initialize particles.js -->
+  <!-- Initialize particles.js -->
   <script>
-    particlesJS.load('particles-js','particles.json', function() {
-      console.log('particles.js loaded.');
+    particlesJS.load('particles-js','particles.json',()=>{
+      console.log('particles.js loaded');
+    });
+
+    // ENTER button click → fade out & redirect
+    document.querySelector('.enter-btn').addEventListener('click', () => {
+      document.querySelector('.crt-frame').style.animation = 'fadeOut 0.7s forwards';
+      document.getElementById('particles-js').style.animation = 'fadeOut 0.7s forwards';
+      setTimeout(() => {
+        window.location.href = 'main.html'; // ← change to your target
+      }, 700);
     });
   </script>
 </body>
