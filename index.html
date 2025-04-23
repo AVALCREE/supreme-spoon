@@ -1,141 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Coming Soon | lolwhat.xyz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CSS Features</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"></script>
+    <!-- Particles.js -->
+    <script src="particles.min.js"></script>
 
-  <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <style>
+        /* Feature 1: Glowing Text Effect */
+        .glowing-text {
+            font-size: 40px;
+            color: white;
+            text-align: center;
+            animation: glow 1.5s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px red, 0 0 10px red, 0 0 15px red, 0 0 20px yellow; }
+            50% { text-shadow: 0 0 10px yellow, 0 0 20px yellow, 0 0 30px yellow, 0 0 40px green; }
+            100% { text-shadow: 0 0 15px green, 0 0 30px green, 0 0 45px green, 0 0 60px blue; }
+        }
 
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-    }
-    .background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
+        /* Feature 2: Button Hover Glow */
+        .glowing-button {
+            padding: 10px 20px;
+            background-color: #333;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
 
-    /* Animated Gradient Border */
-    .glow-wrapper {
-      position: relative;
-      padding: 3px;
-      border-radius: 12px;
-      background: linear-gradient(270deg, #00f2ff, #ff00d4, #00f2ff);
-      background-size: 600% 600%;
-      animation: gradientShift 6s ease infinite;
-    }
+        .glowing-button:hover {
+            background-color: #444;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50% }
-      50% { background-position: 100% 50% }
-      100% { background-position: 0% 50% }
-    }
+        /* Feature 3: Hover Pulse Effect */
+        .pulse-hover {
+            display: inline-block;
+            font-size: 24px;
+            color: #333;
+            padding: 10px 20px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
 
-    /* Cursor Particle Effect */
-    .particle {
-      position: absolute;
-      background-color: white;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: moveParticle 1s ease-in-out forwards;
-    }
+        .pulse-hover:hover {
+            transform: scale(1.2);
+            animation: pulse 1.2s ease-in-out infinite;
+        }
 
-    @keyframes moveParticle {
-      to {
-        transform: scale(0);
-        opacity: 0;
-      }
-    }
-  </style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Feature 4: Animated Gradient Background */
+        .gradient-background {
+            height: 100vh;
+            background: linear-gradient(45deg, #ff6ec7, #ffbc00);
+            background-size: 400% 400%;
+            animation: gradientAnimation 5s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Feature 5: Circular Hover Animation */
+        .circular-hover {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #ff6ec7;
+            transition: all 0.4s ease;
+        }
+
+        .circular-hover:hover {
+            transform: rotate(360deg);
+        }
+
+        /* Feature 6: Text Ripple Effect */
+        .ripple-text {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+            display: inline-block;
+        }
+
+        .ripple-text:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 1.5s infinite;
+        }
+
+        @keyframes ripple {
+            0% { width: 10px; height: 10px; opacity: 1; }
+            100% { width: 150px; height: 150px; opacity: 0; }
+        }
+
+        /* Feature 7: Fade In Text Animation */
+        .fade-in-text {
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Feature 8: 3D Hover Effect */
+        .hover-3d {
+            display: inline-block;
+            padding: 20px;
+            background-color: #ff6ec7;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 8px;
+            perspective: 1000px;
+            transition: transform 0.5s;
+        }
+
+        .hover-3d:hover {
+            transform: rotateY(180deg);
+        }
+
+        /* Feature 9: Typing Animation */
+        .typing-animation {
+            display: inline-block;
+            font-size: 32px;
+            font-weight: bold;
+            border-right: 4px solid #333;
+            width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 4s steps(30) 1s forwards;
+        }
+
+        @keyframes typing {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* Feature 10: Neon Border Animation */
+        .neon-border {
+            padding: 15px;
+            border: 3px solid #00ff00;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .neon-border:hover {
+            box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00;
+        }
+    </style>
 </head>
-<body class="bg-blue-800 text-white flex items-center justify-center h-screen">
-  
-  <!-- Particles Container -->
-  <div id="particles-js" class="background"></div>
-
-  <!-- Main Content -->
-  <div class="glow-wrapper max-w-lg w-full z-10 rounded-xl">
-    <div class="text-center p-6 bg-blue-900 rounded-xl">
-      <h1 id="title" class="text-5xl font-bold mb-6"></h1>
-      <p class="text-xl mb-6">We are working hard to bring something amazing! Stay tuned.</p>
-      <p class="text-lg">Our website will be live soon on <a href="https://lolwhat.xyz" class="text-blue-400 hover:text-blue-600">lolwhat.xyz</a></p>
-      <div class="mt-8 text-2xl">
-        <span id="countdown">Launching in: <span id="timer" class="font-mono">Loading...</span></span>
-      </div>
+<body class="bg-gray-900 text-white">
+    <!-- Particles.js Container -->
+    <div id="particles-js" class="absolute top-0 left-0 w-full h-full z-0"></div>
+    
+    <div class="flex flex-col items-center justify-center h-screen z-10 relative space-y-6">
+        <div class="glowing-text">Glowing Text Example</div>
+        <button class="glowing-button">Glowing Button</button>
+        <div class="pulse-hover">Hover to Pulse</div>
+        <div class="gradient-background w-full h-72 flex items-center justify-center">
+            Animated Gradient Background
+        </div>
+        <div class="circular-hover"></div>
+        <div class="ripple-text">Ripple Effect Text</div>
+        <div class="fade-in-text">Fade In Text</div>
+        <div class="hover-3d">3D Hover Effect</div>
+        <div class="typing-animation">Typing Animation</div>
+        <div class="neon-border">Neon Border</div>
     </div>
-  </div>
 
-  <!-- Dark Mode Toggle -->
-  <button id="toggleDark" class="fixed top-4 right-4 bg-gray-200 text-black px-4 py-2 rounded z-50 hover:bg-gray-300">🌓</button>
-
-  <!-- Scripts -->
-  <script src="particles.min.js"></script> <!-- or particles.js if unminified -->
-
-  <script>
-    // Countdown Timer Script
-    const launchDate = new Date("2025-05-01T00:00:00").getTime(); // Set your launch date here
-    const timerEl = document.getElementById("timer");
-
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const diff = launchDate - now;
-
-      if (diff <= 0) {
-        timerEl.textContent = "We're live!";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      timerEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    };
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-
-    // Typewriter Effect for Title
-    const txt = "Coming Soon...";
-    let i = 0;
-    function typeWriter() {
-      if (i < txt.length) {
-        document.getElementById("title").innerHTML += txt.charAt(i);
-        i++;
-        setTimeout(typeWriter, 100);
-      }
-    }
-    typeWriter();
-
-    // Cursor Particle Effect
-    document.addEventListener('mousemove', (e) => {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.width = particle.style.height = `${Math.random() * 5 + 2}px`;
-      particle.style.left = `${e.pageX}px`;
-      particle.style.top = `${e.pageY}px`;
-      document.body.appendChild(particle);
-      setTimeout(() => {
-        particle.remove();
-      }, 500);
-    });
-
-    // Dark Mode Toggle
-    const toggleBtn = document.getElementById("toggleDark");
-    toggleBtn.addEventListener("click", () => {
-      document.body.classList.toggle("bg-blue-800");
-      document.body.classList.toggle("bg-gray-100");
-      document.body.classList.toggle("text-white");
-      document.body.classList.toggle("text-black");
-    });
-  </script>
+    <!-- Particles.js Setup -->
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 50,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 4,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
 </body>
 </html>
