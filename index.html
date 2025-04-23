@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Coming Soon | lolwhat.xyz</title>
-  
+
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  
-  <!-- Particles.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@1.36.1/dist/tsparticles.min.js"></script>
-  
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -22,90 +19,24 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #001f3d;
       z-index: -1;
     }
   </style>
 </head>
 <body class="bg-blue-800 text-white flex items-center justify-center h-screen">
-  <!-- Particles -->
+  
+  <!-- Particles Container -->
   <div id="particles-js" class="background"></div>
 
-  <!-- Content -->
-  <div class="text-center p-6 max-w-lg w-full">
+  <!-- Main Content -->
+  <div class="text-center p-6 max-w-lg w-full z-10">
     <h1 class="text-5xl font-bold mb-6">Coming Soon</h1>
     <p class="text-xl mb-6">We are working hard to bring something amazing! Stay tuned.</p>
     <p class="text-lg">Our website will be live soon on <a href="https://lolwhat.xyz" class="text-blue-400 hover:text-blue-600">lolwhat.xyz</a></p>
   </div>
 
-  <script>
-    // Particle.js initialization
-    tsParticles.load("particles-js", {
-      particles: {
-        number: {
-          value: 80,
-          density: {
-            enable: true,
-            value_area: 800
-          }
-        },
-        color: {
-          value: "#00baff"
-        },
-        shape: {
-          type: "circle"
-        },
-        opacity: {
-          value: 0.5,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 1,
-            opacity_min: 0.1,
-            sync: false
-          }
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 2,
-            size_min: 0.1,
-            sync: false
-          }
-        },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#00baff",
-          opacity: 0.4,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 6,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out"
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: {
-            enable: true,
-            mode: "repulse"
-          },
-          onclick: {
-            enable: true,
-            mode: "push"
-          }
-        }
-      },
-      retina_detect: true
-    });
-  </script>
+  <!-- Scripts -->
+  <script src="particles.min.js"></script> <!-- or particles.js if unminified -->
+  <script src="app.js"></script>
 </body>
 </html>
