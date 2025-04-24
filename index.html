@@ -106,6 +106,20 @@
       /* layout via Tailwind utility classes on the div itself */
     }
 
+    /* Additional screen */
+    #new-screen {
+      display: none;              /* start hidden */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease-in-out;
+      z-index: 110;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
     /* keyframes carried over */
     @keyframes scanline {
       0% { background-position: 0 0; }
@@ -155,6 +169,14 @@
     </a>
   </div>
 
+  <!-- New Screen -->
+  <div id="new-screen">
+    <h2 class="text-3xl mb-4">You’ve reached a new level.</h2>
+    <button class="bg-blue-500 text-white px-6 py-3 text-xl rounded hover:bg-blue-600 transition">
+      Placeholder Button
+    </button>
+  </div>
+
   <script>
     // particles.js
     particlesJS.load('particles-bg', 'particles.json', () => {
@@ -188,9 +210,26 @@
       });
     }
 
-    document.getElementById('enter').addEventListener('click', revealMain);
+    // Reveal new screen after Enter
+    function showNewScreen() {
+      const newScreen = document.getElementById('new-screen');
+      newScreen.style.display = 'flex';
+      // force repaint then fade in
+      requestAnimationFrame(() => {
+        newScreen.style.opacity = '1';
+        newScreen.style.pointerEvents = 'auto';
+      });
+    }
+
+    document.getElementById('enter').addEventListener('click', () => {
+      revealMain();
+      setTimeout(showNewScreen, 2000); // show new screen 2s after main content
+    });
     window.addEventListener('keydown', e => {
-      if (e.key === 'Enter') revealMain();
+      if (e.key === 'Enter') {
+        revealMain();
+        setTimeout(showNewScreen, 2000);
+      }
     });
   </script>
 </body>
