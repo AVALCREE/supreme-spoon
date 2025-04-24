@@ -17,13 +17,49 @@
       overflow: hidden;
     }
 
-    #particles-bg {
+    /* Blue screen styling */
+    #blue-screen {
       position: fixed;
       inset: 0;
-      z-index: 0;
-      pointer-events: none;
+      background-color: blue;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
+    .grey-box {
+      background-color: grey;
+      color: white;
+      font-size: 2rem;
+      padding: 20px;
+      margin-top: 50px;
+      border-radius: 10px;
+      font-family: 'VT323', monospace;
+    }
+
+    .scrolling-frame {
+      width: 100%;
+      height: 100px;
+      overflow: hidden;
+      margin-top: 50px;
+    }
+
+    .scrolling-content {
+      white-space: nowrap;
+      animation: scrollFrame 10s linear infinite;
+      font-size: 1.5rem;
+      color: white;
+      font-family: 'VT323', monospace;
+    }
+
+    @keyframes scrollFrame {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* CRT Intro Screen */
     .crt {
       position: fixed;
       inset: 0;
@@ -113,6 +149,14 @@
 </head>
 <body>
 
+  <!-- Blue Screen with grey box and scrolling frame -->
+  <div id="blue-screen">
+    <div class="grey-box">CHANNEL 1</div>
+    <div class="scrolling-frame">
+      <div class="scrolling-content">Welcome to Channel 1. Stay tuned for updates... This is the beginning of something strange...</div>
+    </div>
+  </div>
+
   <!-- Background Particles -->
   <div id="particles-bg"></div>
 
@@ -128,7 +172,7 @@
     <p class="mb-4">You’ve entered the matrix. Proceed wisely.</p>
     <a href="https://example.com" target="_blank">
       <button class="bg-green-500 text-black px-6 py-3 text-xl rounded hover:bg-green-600 transition">
-        Go to example.com
+        Placeholder
       </button>
     </a>
   </div>
@@ -141,6 +185,7 @@
 
     // Trigger to reveal main content
     function revealMain() {
+      document.getElementById('blue-screen').style.display = 'none';
       document.getElementById('crt-screen').style.display = 'none';
       const main = document.getElementById('main-content');
       main.style.opacity = '1';
