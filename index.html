@@ -17,7 +17,7 @@
       overflow: hidden;
     }
 
-    /* --- VHS BLUE SCREEN --- */
+    /* VHS BLUE SCREEN */
     #vhs-screen {
       position: fixed;
       inset: 0;
@@ -26,10 +26,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
       animation: vhsNoise 0.1s infinite steps(2);
     }
-    /* simulated noise overlay */
     #vhs-screen::before {
       content: "";
       position: absolute; inset: 0;
@@ -37,7 +35,6 @@
       mix-blend-mode: overlay;
       pointer-events: none;
     }
-    /* blinking PLAY text */
     .play-indicator {
       position: absolute;
       top: 20px; right: 30px;
@@ -46,38 +43,86 @@
       color: #fff;
       animation: blink 1s infinite;
     }
-    /* VHS scanlines */
     @keyframes vhsNoise {
       from { background-position: 0 0; }
       to   { background-position: -100% 100%; }
     }
-
     @keyframes blink {
       0%,100% { opacity: 1; }
       50%     { opacity: 0; }
     }
 
-    /* --- CRT Intro Screen (unchanged) --- */
+    /* CRT Intro Screen */
     .crt {
       position: fixed;
       inset: 0;
       z-index: 50;
       background: rgba(0, 0, 0, 0.85);
-      display: none; /* hide initially */
+      display: none; /* hidden until VHS screen hides */
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       animation: glitchLoop 2s infinite steps(2);
     }
-    .crt::before { /* scanlines overlay */ }
-    .crt h1 { /* glitchy title */ }
-    .crt .press-enter { /* blink press-enter */ }
+    .crt::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      mix-blend-mode: overlay;
+      animation: scanline 0.05s infinite;
+      z-index: 51;
+    }
+    .crt h1 {
+      font-size: 4rem;
+      color: #fff;
+      text-shadow: -2px 0 red, 2px 0 cyan;
+      animation: titleGlitch 1s infinite alternate-reverse ease-in-out;
+    }
+    .crt .press-enter {
+      margin-top: 2rem;
+      font-size: 2rem;
+      color: #0f0;
+      animation: blink 1s infinite;
+      cursor: pointer;
+      z-index: 52;
+    }
 
-    /* main-content stays the same but hidden initially */
-    #main-content { opacity: 0; pointer-events: none; /* etc. */ }
+    /* Main Content (unchanged) */
+    #main-content {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease-in-out;
+      z-index: 100;
+      position: relative;
+    }
 
-    /* (all other keyframes and styles from before remain unchanged) */
+    @keyframes scanline {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 4px; }
+    }
+    @keyframes titleGlitch {
+      0% { transform: translate(0,0) skew(0deg); }
+      25% { transform: translate(1px,-1px) skew(0.5deg); }
+      50% { transform: translate(-2px,2px) skew(-0.5deg); }
+      75% { transform: translate(1px,-2px) skew(0.2deg); }
+      100% { transform: translate(0,0) skew(0deg); }
+    }
+    @keyframes glitchLoop {
+      0% { filter: none; transform: none; }
+      20% { filter: contrast(1.2) hue-rotate(4deg); transform: translate(1px,-1px); }
+      40% { filter: brightness(0.9); transform: translate(-2px,2px); }
+      60% { filter: hue-rotate(-5deg); transform: translate(2px,-3px); }
+      80% { filter: contrast(1.3); transform: translate(-3px,1px); }
+      100% { filter: none; transform: none; }
+    }
   </style>
 </head>
 <body>
@@ -87,6 +132,9 @@
     <div class="play-indicator">PLAY ▶</div>
   </div>
 
+  <!-- Background Particles -->
+  <div id="particles-bg"></div>
+
   <!-- CRT Intro Screen -->
   <div class="crt" id="crt-screen">
     <h1 class="glitchy">WELCOME TO lolwhat.xyz</h1>
@@ -95,14 +143,23 @@
 
   <!-- Main UI -->
   <div id="main-content" class="w-full h-screen flex flex-col items-center justify-center text-white">
-    <!-- ... -->
+    <h2 class="text-4xl mb-4">Welcome to the Real Deal</h2>
+    <p class="mb-4">You’ve entered the matrix. Proceed wisely.</p>
+    <a href="https://example.com" target="_blank">
+      <button class="bg-green-500 text-black px-6 py-3 text-xl rounded hover:bg-green-600 transition">
+        Placeholder
+      </button>
+    </a>
   </div>
 
   <script>
-    // after 3s (or on any key) hide VHS and show CRT
+    // load particles.js
+    particlesJS.load('particles-bg', 'particles.json', () => console.log("particles.js loaded!"));
+
+    // after 3s or any keypress, hide VHS and show CRT
     const vhs = document.getElementById('vhs-screen');
     const crt = document.getElementById('crt-screen');
-    let hideVhs = () => {
+    const hideVhs = () => {
       vhs.style.display = 'none';
       crt.style.display = 'flex';
       window.removeEventListener('keydown', hideVhs);
@@ -110,17 +167,15 @@
     setTimeout(hideVhs, 3000);
     window.addEventListener('keydown', hideVhs);
 
-    // existing ENTER-to-main logic
-    function revealMain() {
+    // enter → reveal main content
+    const revealMain = () => {
       crt.style.display = 'none';
       const main = document.getElementById('main-content');
       main.style.opacity = '1';
       main.style.pointerEvents = 'auto';
-    }
+    };
     document.getElementById('enter').addEventListener('click', revealMain);
-    window.addEventListener('keydown', e => {
-      if (e.key === 'Enter') revealMain();
-    });
+    window.addEventListener('keydown', e => e.key === 'Enter' && revealMain());
   </script>
 
 </body>
